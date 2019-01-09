@@ -40,6 +40,7 @@ module.exports = function( req , res , next ){
 			let imagePath = path.resolve(process.cwd() + '/public' + _path[0]) ;
 			buildImg(imagePath , quality , size)
 				.then( data => {
+						res.header('Content-type', 'image/' + RegExp.$1);
 						res.end(data, 'binary')
 				})
 				.catch( err => {
