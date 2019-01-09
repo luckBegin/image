@@ -1,0 +1,126 @@
+<page-header [title]="'菜单管理'">
+</page-header>
+
+<div class="c-container depart_container" [style.height]="hHeight + 'px'" (click)="menuShow = false">
+  <nz-spin [nzSize]="'large'" class="loading" nzTip='加载中' *ngIf="loading" [@ngIfAnimate]>
+  </nz-spin>
+
+  <div *ngIf="!loading" [@ngIfAnimate]>
+    <div class="btnWrap">
+      <button
+        nz-button
+        nzType="primary"
+        class="c-button"
+        (click)="add(true)"
+      >
+        新增
+      </button>
+    </div>
+
+    <nz-tree
+      [nzData]="menuList"
+      (nzExpandChange)='menuShow = false'
+      (nzClick)='showMenu($event)'
+    >
+    </nz-tree>
+  </div>
+</div>
+
+<div class="menu" *ngIf="menuShow" [@ngIfAnimate] [style.top]="mouseHeight + 'px'">
+  <div class="menu_item borderItem" (click)="add()">
+    <i nz-icon type="plus" theme="outline"></i>
+    添加
+  </div>
+  <div class="menu_item borderItem" (click)="edit()">
+    <i nz-icon type="edit" theme="outline"></i>
+    编辑
+  </div>
+  <div class="menu_item borderItem" (click)="del()">
+    <i nz-icon type="delete" theme="outline"></i>
+    删除
+  </div>
+  <div class="menu_item" (click)="menuShow = false">
+    <i nz-icon type="close" theme="outline"></i>
+    关闭
+  </div>
+</div>
+
+<!-- model -->
+<nz-modal [nzVisible]="isVisible" [nzTitle]="refuseTitle" [nzContent]="refuseContent" [nzFooter]="refuseFooter" (nzOnCancel)="isVisible = false">
+  <ng-template #refuseTitle>
+    确认删除?
+  </ng-template>
+
+  <ng-template #refuseContent>
+    <div class="c-flex-row-start">
+      <i nz-icon type="info-circle" theme="outline" class="modal-icon icon-error"></i>
+      <p style="margin : 0 ; padding: 0">
+        一旦删除 , 该数据不可恢复
+      </p>
+    </div>
+  </ng-template>
+
+  <ng-template #refuseFooter>
+    <button nz-button nzType="default" (click)="isVisible = false">取消</button>
+    <button nz-button nzType="primary" (click)="modalConfirm($event)">确定</button>
+  </ng-template>
+
+</nz-modal>
+
+<!-- form -->
+
+<nz-modal [(nzVisible)]="infoBoxShow" [nzTitle]="modalTitle" [nzContent]="modalContent" [nzFooter]="modalFooter" (nzOnCancel)="infoBoxShow = false">
+  <ng-template #modalTitle>
+    <span *ngIf='!editMark'>新增</span>
+    <span *ngIf='editMark'>编辑</span>
+  </ng-template>
+
+  <ng-template #modalContent>
+    <form nz-form [nzLayout]="'inline'" [formGroup]="validateForm">
+
+      <div formArrayName="menuDescriptionVOS">
+        <nz-form-item class='c-formSec'  *ngFor="let form of menuDescriptionVOS.controls; let i=index;" [formGroupName]="i">
+          <nz-form-label [nzSm]="9" nzRequired nzFor="url">菜单名称</nz-form-label>
+          <nz-form-control [nzSm]="14"  [nzOffset]='1'>
+            <input nz-input formControlName="description" id="description" placeholder="请输入菜单名称">
+            <nz-form-explain *ngIf="form.get('description').dirty && form.get('description').errors">菜单名称不能为空</nz-form-explain>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <nz-form-item class='c-formSec'>
+        <nz-form-label [nzSm]="9" nzRequired nzFor="iconPath">图标</nz-form-label>
+        <nz-form-control [nzSm]="14"  [nzOffset]='1'>
+          <input nz-input formControlName="iconPath" id="iconPath" readonly>
+          <nz-form-explain *ngIf="validateForm.get('iconPath').dirty && validateForm.get('iconPath').errors">图标不能为空</nz-form-explain>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item class='c-formSec'>
+        <nz-form-label [nzSm]="9" nzRequired nzFor="url">路径</nz-form-label>
+        <nz-form-control [nzSm]="14"  [nzOffset]='1'>
+          <input nz-input formControlName="url" id="url" placeholder="请输入节点路径">
+          <nz-form-explain *ngIf="validateForm.get('url').dirty && validateForm.get('url').errors">节点路径不能为空</nz-form-explain>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item class='c-formSec'>
+        <nz-form-label [nzSm]="9" nzRequired nzFor="isButton">是否按钮</nz-form-label>
+        <nz-form-control [nzSm]="14"  [nzOffset]='1'>
+          <nz-select name="select-error" formControlName="isButton" id="isButton" nzPlaceHolder="请选择是否为按钮">
+            <nz-option nzValue="1" nzLabel="是"></nz-option>
+            <nz-option nzValue="0" nzLabel="否"></nz-option>
+          </nz-select>
+          <nz-form-explain *ngIf="validateForm.get('isButton').dirty && validateForm.get('isButton').errors">是否按钮必须选择</nz-form-explain>
+        </nz-form-control>
+      </nz-form-item>
+
+    </form>
+  </ng-template>
+
+  <ng-template #modalFooter>
+    <button nz-button nzType="primary" *ngIf='!editMark' [disabled]="!validateForm.valid" (click)='makeNew($event)'>确定</button>
+    <button nz-button nzType="primary" *ngIf='editMark' [disabled]="!validateForm.valid" (click)='save($event)'>保存</button>
+    <button nz-button nzType="default" (click)='infoBoxShow = false'>关闭</button>
+  </ng-template>
+</nz-modal>

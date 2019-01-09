@@ -1,0 +1,118 @@
+<page-header [title]="'项目类别'">
+</page-header>
+
+<div class="c-container">
+  <div style="padding-top: 20px; margin-bottom: 20px;">
+    <div style="margin-bottom: 20px">
+      <common-search-bar [SearchBarData] = 'searchBarData'>
+      </common-search-bar>
+    </div>
+
+    <button
+      nz-button
+      nzType="primary"
+      class="c-button"
+      (click)="add()"
+    >
+      新增
+    </button>
+    <common-table [TableData]="tableData">
+    </common-table>
+  </div>
+
+</div>
+
+
+<!--<nz-modal [nzVisible]="isVisible" [nzTitle]="refuseTitle" [nzContent]="refuseContent" [nzFooter]="refuseFooter"-->
+          <!--(nzOnCancel)="isVisible = false">-->
+  <!--<ng-template #refuseTitle>-->
+    <!--确认删除?-->
+  <!--</ng-template>-->
+
+  <!--<ng-template #refuseContent>-->
+    <!--<div class="c-flex-row-start">-->
+      <!--<i nz-icon type="info-circle" theme="outline" class="modal-icon icon-error"></i>-->
+      <!--<p style="margin : 0 ; padding: 0">-->
+        <!--一旦删除 , 该数据不可恢复-->
+      <!--</p>-->
+    <!--</div>-->
+  <!--</ng-template>-->
+
+  <!--<ng-template #refuseFooter>-->
+    <!--<button nz-button nzType="default" (click)="isVisible = false">取消</button>-->
+    <!--<button nz-button nzType="primary" (click)="modalConfirm($event)">确定</button>-->
+  <!--</ng-template>-->
+<!--</nz-modal>-->
+
+<nz-modal [(nzVisible)]="formShow" [nzTitle]="modalTitle" [nzContent]="modalContent" [nzFooter]="modalFooter"
+          (nzOnCancel)="formShow = false">
+  <ng-template #modalTitle>
+    <span *ngIf='!editMark'>
+      添加
+    </span>
+    <span *ngIf='editMark'>
+      编辑
+    </span>
+  </ng-template>
+
+  <ng-template #modalContent>
+    <form nz-form [nzLayout]="'inline'" [formGroup]="form">
+      <nz-form-item class='c-formSec'>
+        <nz-form-label [nzSm]="9" nzRequired nzFor="name">
+          分类名称
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzOffset]='1'>
+          <input nz-input type="text" formControlName="name" id="name" placeholder="请输入分类名称">
+          <nz-form-explain *ngIf="form.get('name').dirty && form.get('name').errors">
+             <span>
+                 分类名称不能为空
+             </span>
+          </nz-form-explain>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item class='c-formSec' >
+        <nz-form-label [nzSm]="9" nzRequired nzFor="projectId">
+          所属项目
+        </nz-form-label>
+        <nz-form-control [nzSm]="14"  [nzOffset]='1'>
+          <nz-select nzPlaceHolder='请选择所属项目' formControlName="projectId" id="projectId">
+            <nz-option *ngFor="let item of projectEnum" [nzValue]="item.value" [nzLabel]="item.key"></nz-option>
+          </nz-select>
+          <nz-form-explain *ngIf="form.get('projectId').dirty && form.get('projectId').errors">
+            <span>
+              所属项目不能为空
+            </span>
+          </nz-form-explain>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item class='c-formSec'>
+        <nz-form-label [nzSm]="9"  nzFor="remark">
+          备注
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzOffset]='1'>
+          <input nz-input type="text" formControlName="remark" id="remark" placeholder="请输入备注">
+          <nz-form-explain *ngIf="form.get('remark').dirty && form.get('remark').errors">
+             <span>
+                 备注不能为空
+             </span>
+          </nz-form-explain>
+        </nz-form-control>
+      </nz-form-item>
+
+    </form>
+  </ng-template>
+
+  <ng-template #modalFooter>
+    <button nz-button nzType="primary" *ngIf='!editMark' [disabled]="!form.valid" (click)='makeNew($event)'>
+      确定
+    </button>
+    <button nz-button nzType="primary" *ngIf='editMark' [disabled]="!form.valid" (click)='save($event)'>
+      保存
+    </button>
+    <button nz-button nzType="default" (click)='formShow = false'>
+      关闭
+    </button>
+  </ng-template>
+</nz-modal>
