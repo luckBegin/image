@@ -6,10 +6,9 @@ var classifyService = require('./service/classify.service') ;
 var fs = require("fs") ;
 var path = require("path") ;
 var multer = require("multer");
-
+const response = require("./service/basic.response") ;
+const prefix = 'http://nas.helebuwei.cn/images/' ;
 /* GET home page. */
-
-
 var storage = multer.diskStorage({
 	destination: function(req, file, cb) {
 		cb(null, path.join(__dirname , "../public/images"));
@@ -111,6 +110,10 @@ router.get("/list" , ( req , res , next) => {
 	var name = req.query.name ;
 	listServive.get( pageNumber , pageSize , name )
 		.then( data => {
+			data.data.forEach( item => {
+				item.fileName = item.path ;
+				item.path = prefix + item.path ;
+			});
 			res.send(data)
 		})
 		.catch( err => res.send(err))
@@ -126,4 +129,21 @@ router.post("/list" , upload.single('img'), function(req, res, next) {
 		.catch( err => res.send(err))
 });
 
+router.delete("/list/:id" , function(req,res,next){
+	var id = req.params.id ;
+	var fileName = req.query.path ;
+	var filePath = path.join(__dirname , "../public/images/"+fileName) ;
+	console.log(filePath) ;
+	fs.unlink( filePath , (err) => {
+		if(err){
+			res.send( response(false , "图片文件不存在" ) ) ;
+		}else{
+			listServive.delete(id)
+				.then( data => {
+					res.send(data)
+				})
+				.catch( err => res.send(err))
+		};
+	});
+});
 module.exports = router;

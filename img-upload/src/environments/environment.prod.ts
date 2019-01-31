@@ -3,5 +3,5 @@ export const environment = {
   production: true,
   useHash: true,
   hmr: false,
-  host : 'http://192.168.40.231:4000'
+  host : 'http://nas.helebuwei.cn'
 };

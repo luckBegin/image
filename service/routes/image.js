@@ -21,8 +21,7 @@ var storage = multer.diskStorage({
 var upload = multer({ storage: storage });
 
 router.post('/image' , upload.single('img'), function(req, res, next) {
-	const path =  "http://192.168.40.231:4000/images/" ;
-	res.send({success : true , message : "" , data : { path : path + req.query.imageName }}) ;
+	res.send({success : true , message : "" , data : { path : req.query.imageName }}) ;
 });
 
 router.get("/image" , function(req,res,next){

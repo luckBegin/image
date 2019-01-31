@@ -7,7 +7,7 @@ export const environment = {
   production: false,
   useHash: true,
   hmr: false,
-  host : 'http://192.168.40.231:4000'
+  host : 'http://localhost:3000'
 };
 
 /*

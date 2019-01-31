@@ -27,8 +27,9 @@ export class ListService {
   put(data: any): any {
   } ;
 
-  @DELETE(API.project.list)
+
   delete(data: any): any {
+    return this.http.delete(API.project.list +"/"+ data.id +"?path=" + data.fileName)
   } ;
 
   @POST(API.project.uploadImg, false)

@@ -9,6 +9,7 @@ import { ENUM, RESPONSE } from '../../../models';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Service } from '../../../../decorators/service.decorator';
 import { el } from '@angular/platform-browser/testing/src/browser_util';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector : "project-list",
@@ -39,10 +40,11 @@ export class ListCompnent implements  OnInit{
   isVisible : boolean = false ;
 
   form : FormGroup = this.fb.group({
-    id : [null] ,
-    name : [null ] ,
-    projectId : [null] ,
-    classifyId : [null]
+    id : [ null] ,
+    name : [ null ] ,
+    projectId : [ null ] ,
+    classifyId : [ null ] ,
+    fileName : [ null ]
   });
 
   src : string ;
@@ -68,6 +70,18 @@ export class ListCompnent implements  OnInit{
           return DateUtils.format(item.createTime , 'y-m-d') ;
       }},
     ],
+    btn: {
+      title: '操作',
+      items: [{
+        type: 'del',
+        title: '删除',
+        fn: (data) => {
+          this.isVisible = true ;
+          this.form.patchValue(data) ;
+        },
+      },
+      ],
+    },
     data: [],
     change : (type : string , size : number ) => {
       if(type === 'size')
@@ -163,12 +177,21 @@ export class ListCompnent implements  OnInit{
     this.getList() ;
   };
 
-  @Service('service.delete' , true , function(){
-    return this.form.value ;
-  })
   modalConfirm($event){
-    this.msg.success("删除成功") ;
-    this.isVisible = false ;
-    this.getList();
+    const value = this.form.value ;
+    this.service.delete(value)
+      .pipe(
+          filter( ( res : RESPONSE ) => {
+              if(res.success === false){
+                  this.msg.error("删除失败")
+              };
+              return res.success === true ;
+          }),
+      )
+      .subscribe( ( res : RESPONSE) => {
+        this.msg.success("删除成功") ;
+        this.isVisible = false ;
+        this.getList();
+      })
   };
 }

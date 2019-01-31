@@ -116,20 +116,29 @@ export class UserLoginComponent implements OnDestroy {
     // 默认配置中对所有HTTP请求都会强制 [校验](https://ng-alain.com/auth/getting-started) 用户 Token
     // 然一般来说登录请求不需要校验，因此可以在请求URL加上：`/login?_allow_anonymous=true` 表示不触发用户 Token 校验
 
-    const formData = new FormData() ;
-    formData.append("username" , this.userName.value ) ;
-    formData.append("password" , this.password.value ) ;
+    // const formData = new FormData() ;
+    // formData.append("username" , this.userName.value ) ;
+    // formData.append("password" , this.password.value ) ;
+
+    const formData = {
+      username : this.userName.value ,
+      password : this.password.value
+    };
 
     this.ss.set("loginInfo" , true ) ;
-    this.getMenu(3) ;
-    //
-    // ( <Observable<any>> < any >this.menuSer.login(formData) )
-    //   .subscribe( ( res : any ) => {
-    //     this.ss.set('loginInfo' , res.message) ;
-    //     this.reuseTabService.clear();
-    //     this.getMenu(res.data.id) ;
-    //     // this.startupSrv.load().then(() => this.router.navigate(['/']));
-    //   });
+
+    // if(this.password.value === 'Panshi@123!321'){
+    //   this.getMenu(3) ;
+    // }else{
+    //   this.msg.error("密码错误") ;
+    // };
+    ( <Observable<any>> < any >this.menuSer.login( formData ) )
+      .subscribe( ( res : any ) => {
+        this.ss.set('loginInfo' , res.data) ;
+        this.reuseTabService.clear();
+        this.getMenu(res.data.id) ;
+        // this.startupSrv.load().then(() => this.router.navigate(['/']));
+      });
 
     // this.http
     //   .post('/login/account?_allow_anonymous=true', {
@@ -153,7 +162,6 @@ export class UserLoginComponent implements OnDestroy {
 
   // #region social
   // #endregion
-
   ngOnDestroy(): void {
     if (this.interval$) clearInterval(this.interval$);
   };
@@ -175,7 +183,7 @@ export class UserLoginComponent implements OnDestroy {
       )
       .subscribe( ( res : RESPONSE) => {
         this.ss.set("menuInfo" , res.data) ;
-        this.router.navigate(['/']) ;
+        this.router.navigate(['/'])
       })
   }
 }
