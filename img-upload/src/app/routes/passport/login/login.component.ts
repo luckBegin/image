@@ -10,7 +10,6 @@ import {
   DA_SERVICE_TOKEN,
 } from '@delon/auth';
 import { ReuseTabService } from '@delon/abc';
-import { environment } from '@env/environment';
 import { StartupService } from '@core/startup/startup.service';
 import { SysMenuService } from '../../../service/system';
 import { RESPONSE } from '../../../models';
@@ -119,7 +118,6 @@ export class UserLoginComponent implements OnDestroy {
     // const formData = new FormData() ;
     // formData.append("username" , this.userName.value ) ;
     // formData.append("password" , this.password.value ) ;
-
     const formData = {
       username : this.userName.value ,
       password : this.password.value
@@ -186,4 +184,4 @@ export class UserLoginComponent implements OnDestroy {
         this.router.navigate(['/'])
       })
   }
-}
+};

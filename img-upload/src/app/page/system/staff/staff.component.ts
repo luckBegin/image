@@ -228,6 +228,7 @@ export class StaffComponent implements OnInit {
     data.roleOutputVOS.forEach(item => {
       roles.push(item.name);
     });
+
     data.departmentDTOS.forEach(item => {
       departs.push(item.id);
     });

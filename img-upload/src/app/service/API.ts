@@ -1,5 +1,6 @@
 import { environment } from '../../environments/environment' ;
 const host : string = environment.host ;
+
 const system = {
   depart : {
     list : host + "/department/tree" ,
