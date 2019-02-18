@@ -2,7 +2,6 @@ const mysql = require("./mysql") ;
 const response = require("./basic.response") ;
 const ListService = {
 	get : ( pageNumber , pageSize , name  ) => {
-
 		let _sql = 'select path , name ,projectId , classifyId , createTime , id from image ' ;
 		let _countSql = "select count(id) as count from image " ;
 		let arr = [] ;
@@ -14,8 +13,9 @@ const ListService = {
 		};
 
 		// if(arguments.length <= 2 )
-		_sql += ` limit ${ (pageNumber - 1) * pageSize } , ${ pageSize * pageNumber }` ;
+		_sql += ` limit ${ (pageNumber - 1) * pageSize } , ${ pageSize }` ;
 
+		console.log(_sql) ;
 		return new Promise( ((resolve, reject) => {
 			mysql( con => {
 				con.query(`${_sql}; ${ _countSql } ` , arr , (err ,result) => {
